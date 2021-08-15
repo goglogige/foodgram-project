@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Мои подписки{% endblock %}
+{% load user_filters %}
+{% block static %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'blocks/icon-user/icon-user.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/icon-time/icon-time.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/icon-plus/icon-plus.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/badge.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_green.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_orange.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_purple.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_blue.css' %}"> -->
+{% endblock %}
+{% block header %}Мои подписки{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+<div class="card-list">
+    <!-- Вывод ленты авторов -->
+    {% for follow in page %}
+        {% include "includes/follow_item.html" with follow=follow %}
+    {% endfor %}
+</div>
+    <!-- Вывод паджинатора -->
+    {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/MainCards.js' %}"></script>
+    <script src="{% static 'js/components/MyFollow.js' %}"></script>
+    <script src="{% static 'js/components/Subscribe.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'myFollow.js' %}"></script>
+{% endblock %}

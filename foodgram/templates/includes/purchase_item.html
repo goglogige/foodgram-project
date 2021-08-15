@@ -1,0 +1,8 @@
+<li class="shopping-list__item" data-id="{{ purchase.id }}">
+    <div class="recipe recipe_reverse">
+        <img src="{{ purchase.recipe.image.url }}" alt="{{ purchase.recipe.slug }}" class="recipe__image recipe__image_big">
+        <h3 class="recipe__title">{{ purchase.recipe.recipe_name }}</h3>
+        <p class="recipe__text"><span class="icon-time"></span> {{ purchase.recipe.time }} мин.
+    </div>
+    <a href="{% url 'delete_purchases' purchase.id %}"  class="shopping-list__button link">Удалить</a>
+</li>

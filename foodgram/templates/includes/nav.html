@@ -1,0 +1,17 @@
+<nav class="nav">
+    <div class="nav__container container">
+        {% include "includes/menu.html" with active_page=True %}
+        {% if user.is_authenticated %}
+        <ul class="nav__items list">
+            <li class="nav__item"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
+            <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link link">Выход</a></li>
+        </ul>
+        {% else %}
+        <ul class="nav__items list">
+            <li class="nav__item"><a href="{% url 'login' %}" class="nav__link link">Войти</a></li>
+            <li class="nav__item"><a href="{% url 'signup' %}" class="button button_style_blue">Создать аккаунт</a></li>
+        </ul>
+        {% endif %}
+    </div>
+
+</nav>

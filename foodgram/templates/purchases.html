@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Список покупок{% endblock %}
+{% block static %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
+{% endblock %}
+{% block header %}Список покупок{% endblock %}
+{% block under_h1 %}{% endblock %}
+{% block content %}
+{% load user_filters %}
+<!-- 
+    {% if next %}
+        <div class="form__info-text">
+            Вы обратились к странице, доступ к которой возможен только для залогиненных пользователей.<br>
+            Пожалуйста, авторизуйтесь.
+        </div>
+    {% endif %} -->
+
+    <div class="card-list card-list_column">
+        <ul class="shopping-list">
+            <!-- Вывод ленты рецептов -->
+            {% for purchase in purchase_list %}
+                {% include "includes/purchase_item.html" with purchase=purchase %}
+            {% endfor %}
+        </ul>
+        <a href="{% url 'purchases_download' %}"><button class="button button_style_blue">Скачать список</button></a>
+
+{% endblock %}
+{% block script %}
+<script src="{% static './js/config/config.js' %}"></script>
+<script src="{% static './js/components/Header.js' %}"></script>
+<script src="{% static './js/components/ShopList.js' %}"></script>
+<script src="{% static './js/api/Api.js' %}"></script>
+<script src="{% static 'shopList.js' %}"></script>
+{% endblock %}

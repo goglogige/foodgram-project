@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}
+{% if flag %}
+    Редактирование рецепта
+{% else %}
+    Создание рецепта
+{% endif %}
+{% endblock %}
+{% block static %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+{% endblock %}
+{% block header %}
+{% if flag %}
+    Редактирование рецепта
+{% else %}
+    Создание рецепта
+{% endif %}
+{% endblock %}
+{% block under_h1 %}{% endblock %}
+{% block content %}
+{% load user_filters %}
+
+    {% if next %}
+        <div class="form__info-text">
+            Вы обратились к странице, доступ к которой возможен только для залогиненных пользователей.<br>
+            Пожалуйста, авторизуйтесь.
+        </div>
+    {% endif %}
+
+    <div class="form-container">
+         <form class="form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form__group">
+                <label for="{{ form.recipe_name.id_for_label }}" class="form__label">{{ form.recipe_name.label }}</label>
+                <div class="form__field-group">
+                    {{ form.recipe_name|add_class:"form__input" }}
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <!-- <div class="form__group">
+                <p class="form__label">{{ form.tags.label }}</p>
+                <div class="form__field-group">
+                    <div class="tags">
+                        <div class="tags__item">
+                            <input type="checkbox" name="breakfast" id="id_breakfast" class="tags__checkbox tags__checkbox_style_orange">
+                            <label for="id_breakfast" class="tags__label">Завтрак</label>
+                        </div>
+                        <div class="tags__item">
+                            <input type="checkbox" name="lunch" id="id_lunch" class="tags__checkbox tags__checkbox_style_green" checked>
+                            <label for="id_lunch" class="tags__label">Обед</label>
+                        </div>
+                        <div class="tags__item">
+                            <input type="checkbox" name="dinner" id="id_dinner" class="tags__checkbox tags__checkbox_style_purple" checked>
+                            <label for="id_dinner" class="tags__label">Ужин</label>
+                        </div>
+                    </div>
+                    <span class="form__error"></span>
+                </div>
+            </div> -->
+
+            <div class="form__group">
+                <p class="form__label">{{ form.tags.label }}</p>
+                <div class="form__field-group">
+                    <div class="tags">    
+                        <div class="tags__item">
+                            <span><input type="checkbox" name="tags" value="1" id="id_tags_0" class="tags__checkbox tags__checkbox_style_orange"></span>
+                            <label for="id_tags_0" class="tags__label">Завтрак</label>
+                        </div>      
+                        <div class="tags__item">
+                            <span><input type="checkbox" name="tags" value="2" id="id_tags_1" class="tags__checkbox tags__checkbox_style_green"></span>
+                            <label for="id_tags_1" class="tags__label">Обед</label>
+                        </div>  
+                        <div class="tags__item">
+                            <span><input type="checkbox" name="tags" value="3" id="id_tags_2" class="tags__checkbox tags__checkbox_style_purple"></span>
+                            <label for="id_tags_2" class="tags__label">Ужин</label>
+                        </div>               
+                        <!-- {% for checkbox in form.tags %}
+                            <div class="tags__item">          
+                                <label for="{{ checkbox.id_for_label }}" class="tags__label">
+                                    <span >{{ checkbox.tag }}</span>
+                                    {{ checkbox.choice_label }}
+                                </label>
+                            </div>    
+                        {% endfor %}                      -->
+                    </div>
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label for="nameIngredient" class="form__label">Ингредиенты</label>
+                <div class="form__field-group">
+                    <div class="form__field-group-ingredientes">
+                        <div class="form__dropdown">
+                            <input type="text" id="nameIngredient" class="form__input">
+                            <div class="form__dropdown-items"></div>
+                        </div>
+                        <input type="number" id="cantidad" class="form__input" min="0">
+                        <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
+                    </div>
+                    <div class="form__field-group-ingredientes-container">
+                        {% if flag %}
+                            <div class="form__field-item-ingredient" id="ing_3">
+                                {% for obj in recipe_ingredient_list %}
+                                    <span>{{ obj.ingredient.title }} {{ obj.amount }}{{ obj.ingredient.dimension }}</span>
+                                    <span class="form__field-item-delete"></span>
+                                    <input id="nameIngredient_{{ obj.ingredient.id }}" name="nameIngredient_{{ obj.ingredient.id }}" type="hidden" value="{{ obj.ingredient.title }}">
+                                    <input id="valueIngredient_{{ obj.ingredient.id }}" name="valueIngredient_{{ obj.ingredient.id }}" type="hidden" value="{{ obj.amount }}">
+                                    <input id="unitsIngredient_{{ obj.ingredient.id }}" name="unitsIngredient_{{ obj.ingredient.id }}" type="hidden" value="{{ obj.ingredient.dimension }}">    
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label for="{{ form.time.id_for_label }}" class="form__label">{{ form.time.label }}</label>
+                <div class="form__field-group form__field-group_time">
+                    {{ form.time|add_class:"form__input" }}
+                    <label for="{{ form.time.id_for_label }}" class="form__label">минут</label>
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label for="{{ form.recipe_description.id_for_label }}" class="form__label">{{ form.recipe_description.label }}</label>
+                <div class="form__field-group">
+                    {{ form.recipe_description|add_class:"form__textarea" }}
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <span class="form__label">{{ form.image.label }}</span>
+                <div class="form__field-group">
+                    {{ form.image }}
+                    <span class="form__error"></span>
+                </div>
+            </div>
+            
+            <div class="form__footer">
+                {% if flag %}
+                    <button class="button button_style_blue">Сохранить рецепт</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' recipe.slug %}" class="form__ingredient-link">Удалить</a>
+                {% else %}
+                    <button class="button button_style_blue">Создать рецепт</button>       
+                {% endif %}
+            </div>
+         </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+<script src="{% static './js/config/config.js' %}"></script>
+<script src="{% static './js/components/Header.js' %}"></script>
+<script src="{% static './js/utils/debouncing.js' %}"></script>
+<script src="{% static './js/api/Api.js' %}"></script>
+<script src="{% static './formRecipe.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Рецепты{% endblock %}
+{% load user_filters %}
+{% block static %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/icon-user/icon-user.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/icon-time/icon-time.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/icon-plus/icon-plus.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/badge.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_green.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_orange.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_purple.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/badge/_style/badge_style_blue.css' %}">
+{% endblock %}
+{% block header %}Рецепты{% endblock %}
+{% block under_h1 %}
+{% include "includes/tag_filter.html" %}
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+    <div class="card-list">
+        <!-- Вывод ленты записей -->
+        {% for recipe in page %}
+            {% include "includes/recipe_item.html" with recipe=recipe %}
+        {% endfor %}
+    </div>
+        <!-- Вывод паджинатора -->
+        {% if page.has_other_pages %}
+            {% include "includes/paginator.html" with items=page paginator=paginator%}
+        {% endif %}
+
+{% endblock %}
+{% block script %}
+{% if user.is_authenticated %}
+    <script src="{% static 'js/components/MainCards.js' %}"></script>
+    <script src="{% static 'js/components/Purchases.js' %}"></script>
+    <script src="{% static 'js/components/Favorites.js' %}"></script>
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/CardList.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'indexAuth.js' %}"></script>
+{% else %}
+    <script src="{% static 'js/components/MainCards.js' %}"></script>
+    <script src="{% static 'js/components/Purchases.js' %}"></script>
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/CardList.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'indexNotAuth.js' %}"></script>
+{% endif %}
+{% endblock %}

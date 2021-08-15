@@ -1,0 +1,20 @@
+{% load user_filters %}
+{% if user.is_authenticated %}
+    <ul class="nav__items list">
+        {% url 'index' as index %}
+        <li class="nav__item {% if index|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
+        {% url 'subscriptions_view' as subscriptions %}
+        <li class="nav__item {% if subscriptions|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'subscriptions_view' %}" class="nav__link link">Мои подписки</a></li>
+        {% url 'new_recipe' as new_recipe %}
+        <li class="nav__item {% if new_recipe|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
+        {% url 'favorites_view' as favorites %}
+        <li class="nav__item {% if favorites|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'favorites_view' %}" class="nav__link link">Избранное</a></li>
+        {% url 'purchases_view' as purchases %}
+        <li class="nav__item {% if purchases|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ count_purchase }}</span></li>
+    </ul>
+{% else %}
+    <ul class="nav__items list">
+        <li class="nav__item {% if index %}nav__item_active{% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
+        <li class="nav__item {% if purchases %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок <span class="badge badge_style_blue nav__badge" id="counter">{{ count_purchase }}</span></a></li>
+    </ul>
+{% endif %}

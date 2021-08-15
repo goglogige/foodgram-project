@@ -1,0 +1,35 @@
+{% load mathfilters %}
+<div class="card-user" data-author="{{ follow.author.id }}">
+    <div class="card-user__header">
+        <h2 class="card-user__title">
+        {% if follow.author.first_name != '' %}
+            {{ follow.author.get_full_name }}
+        {% else %}
+            {{ follow.author.username }}
+        {% endif %}
+        </h2>
+    </div>
+    <div class="card-user__body">
+        <ul class="card-user__items">
+            {% for recipe in follow.author.recipes_user.all|slice:':3' %}
+            <li class="card-user__item">
+                <div class="recipe">
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.slug }}" class="recipe__image">
+                    <h3 class="recipe__title">{{ recipe.recipe_name }}</h3>
+                    <p class="recipe__text"><span class="icon-time"></span> {{ recipe.time }} мин.</p>
+                </div>
+            </li>
+            {% if forloop.last %}
+            {% with count=forloop.counter %}
+            <li class="card-user__item">
+                <a href="{% url 'profile' follow.author.username %}" class="card-user__link link">Еще {{ follow.author.recipes_user.count|sub:count }} рецептов...</a>
+            </li>
+            {% endwith %}
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card-user__footer">
+        <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="card" data-id="{{ favorite.recipe.id }}">
+    <a href="{% url 'recipe' favorite.recipe.slug %}" class="link" target="_blank">
+    <img src="{{ favorite.recipe.image.url }}" alt="{{ favorite.recipe.slug }}" class="card__image"></a>
+    <div class="card__body">
+        <a class="card__title link" href="{% url 'recipe' favorite.recipe.slug %}" target="_blank">{{ favorite.recipe.recipe_name }}</a>
+        <ul class="card__items">
+            {% for tag in favorite.recipe.tags.all %}
+            {% if tag.slug == 'breakfast'%}
+                <li class="card__item"><span class="badge badge_style_orange">{{ tag.title }}</span></li>
+            {% elif tag.slug == 'lunch'%}
+                <li class="card__item"><span class="badge badge_style_green">{{ tag.title }}</span></li>
+            {% else %}
+                <li class="card__item"><span class="badge badge_style_purple">{{ tag.title }}</span></li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        <div class="card__items card__items_column">
+            <p class="card__text"><span class="icon-time"></span> {{ favorite.recipe.time }} мин.</p>
+            <p class="card__text"><span class="icon-user"></span> 
+                <a href="{% url 'profile' favorite.recipe.author.username %}" style="color: black">
+                    {% if favorite.recipe.author.first_name != '' %}
+                        {{ favorite.recipe.author.get_full_name }}
+                    {% else %}
+                        {{ favorite.recipe.author.username }}
+                    {% endif %}
+                </a>
+            </p>
+        </div>
+    </div>
+    <div class="card__footer">
+        <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+        <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+    </div>
+</div>
