@@ -4,8 +4,8 @@
         <a  id="breakfast"
             class="tags__checkbox tags__checkbox_style_orange
                 {% if 'breakfast' in tags %}tags__checkbox_active{% endif %}"
-            href="{% if 'breakfast' in tags %}{% url 'profile' author.username %}{{ tags|cut_tag:'breakfast' }}
-                {% else %}{% url 'profile' author.username %}{{ tags|add_tag:'breakfast' }}{% endif %}">
+            href="{% if 'breakfast' in tags %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|cut_tag:'breakfast' }}
+                {% else %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|add_tag:'breakfast' }}{% endif %}">
         </a>
         <label for="lunch" class="tags__label">Завтрак</label>
     </li>
@@ -13,8 +13,8 @@
         <a  id="lunch"
             class="tags__checkbox tags__checkbox_style_green
                 {% if 'lunch' in tags %}tags__checkbox_active{% endif %}"
-            href="{% if 'lunch' in tags %}{% url 'profile' author.username %}{{ tags|cut_tag:'lunch' }}
-                {% else %}{% url 'profile' author.username %}{{ tags|add_tag:'lunch' }}{% endif %}">
+            href="{% if 'lunch' in tags %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|cut_tag:'lunch' }}
+                {% else %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|add_tag:'lunch' }}{% endif %}">
         </a>
         <label for="lunch" class="tags__label">Обед</label>
     </li>
@@ -22,8 +22,8 @@
         <a  id="dinner"
             class="tags__checkbox tags__checkbox_style_purple
                 {% if 'dinner' in tags %}tags__checkbox_active{% endif %}" 
-            href="{% if 'dinner' in tags %}{% url 'profile' author.username %}{{ tags|cut_tag:'dinner' }}
-                {% else %}{% url 'profile' author.username %}{{ tags|add_tag:'dinner' }}{% endif %}">
+            href="{% if 'dinner' in tags %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|cut_tag:'dinner' }}
+                {% else %}{% url 'profile' author.username %}?page={{page_number}}{{ tags|add_tag:'dinner' }}{% endif %}">
         </a>
         <span for="dinner" class="tags__label">Ужин</span>
     </li>

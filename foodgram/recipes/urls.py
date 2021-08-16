@@ -2,7 +2,6 @@ from django.urls import include, path
 
 from . import views
 
-
 subscriptions_url = [
     path('', views.add_subscriptions, name='subscriptions'),
     path('view/', views.subscriptions_view, name='subscriptions_view'),

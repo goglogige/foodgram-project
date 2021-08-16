@@ -1,34 +1,24 @@
-import io
 import json
-import reportlab
+from decimal import Decimal
 
-from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum
+import reportlab
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
-from django.views.generic.base import TemplateView
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from django.core.paginator import Paginator
-from django.urls import resolve
-from django.db.models.query import Prefetch
-from decimal import Decimal
-#from django.views.decorators.cache import cache_page
-from django.http import FileResponse
-
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-
+from django.views.decorators.cache import cache_page
 from foodgram.settings import PAGINATION_SIZE
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+
 from foodgram import settings
-from .models import (
-    User, Ingredient, Recipe, RecipeIngredient, 
-    Tag, Purchase, Favorite, Follow
-    )
 from .forms import RecipeForm
+from .models import (
+    User, Ingredient, Recipe, RecipeIngredient,
+    Purchase, Favorite, Follow
+)
 from .utils import slugify
 
 
@@ -47,12 +37,11 @@ def server_error(request):
 
 def ingredients(request):
     ingredients_queryset = Ingredient.objects.values()
-    list_ingredients = [ingredient for ingredient in ingredients_queryset] 
-
+    list_ingredients = [ingredient for ingredient in ingredients_queryset]
     return JsonResponse(
         list_ingredients,
         safe=False,
-    ) 
+    )
 
 
 @login_required()
@@ -66,7 +55,7 @@ def add_purchases(request):
     if not purchase.exists():
         Purchase.objects.create(user=user, recipe=recipe)
         return JsonResponse(data)
-    data['success'] = 'False'       
+    data['success'] = 'False'
     return JsonResponse(data)
 
 
@@ -75,7 +64,7 @@ def button_delete_purchases(request, id):
     user = request.user
     recipe = get_object_or_404(Recipe, id=id)
     purchase = Purchase.objects.filter(user=user, recipe=recipe)
-    data = {'success': 'True'} 
+    data = {'success': 'True'}
     if not purchase.exists():
         data['success'] = 'False'
         return JsonResponse(data)
@@ -91,7 +80,7 @@ def delete_purchases(request, purchase_id):
     return render(
         request,
         'purchases.html',
-        {'purchase_list': purchase_list,}
+        {'purchase_list': purchase_list, }
     )
 
 
@@ -108,83 +97,53 @@ def purchases_view(request):
 
 @login_required
 def purchases_download(request):
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="recipes.pdf"'
-    pdf = canvas.Canvas(response, pagesize='A4', pageCompression=0)
-
-    title = 'My shopping list | Foodgram'
-    pdf.setTitle(title)
-    pdf.setFont('Helvetica', 22)
-    pdf.drawCentredString(270, 770, title)
-
     user = get_object_or_404(User, username=request.user)
-    purchase_dict = {}
+    pchs_dict = {}
     purchase_list = Purchase.objects.filter(user=user)
     if purchase_list.count() == 0:
         return redirect('purchases')
-    k = 0
     for purchase in purchase_list:
-        pdf.setFont('Helvetica', 18)
-        pdf.drawCentredString(120, 750 - k, purchase.recipe.recipe_name)
-
-        recipe_ingredient_list = RecipeIngredient.objects.filter(recipe__id=purchase.recipe.id)
-        h = 1
-        num = 1
+        recipe_ingredient_list = RecipeIngredient.objects.filter(
+            recipe__id=purchase.recipe.id
+        )
         for recipe_ingredient in recipe_ingredient_list:
             title = recipe_ingredient.ingredient.title
             amount = recipe_ingredient.amount
             dimension = recipe_ingredient.ingredient.dimension
-            if title not in purchase_dict:
-                purchase_dict[title] = [amount, dimension]
+            if title not in pchs_dict:
+                pchs_dict[title] = [amount, dimension]
             else:
-                purchase_dict[title][0] += amount
-            pdf.setFont('Helvetica', 16)
-            pdf.drawCentredString(100, 740 - h, f'{num}: {purchase_dict[title]} - {purchase_dict[title][0]} {purchase_dict[title][1]}')
-            h += 100
-            num += 1
-        k = k + 15 * h
+                pchs_dict[title][0] += amount
+
+    reportlab.rl_config.TTFSearchPath.append(
+        str(settings.BASE_DIR) + "/Library/Fonts/"
+    )
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="recipes.pdf"'
+    pdf = canvas.Canvas(response, pagesize='A4', pageCompression=0)
+    pdfmetrics.registerFont(TTFont("Arial", "arial.ttf"))
+    pdf.setFont('Arial', 22)
+    title = 'My shopping list | Foodgram'
+    pdf.setTitle(title)
+    pdf.drawCentredString(290, 760, title)
+    pdf.setFont('Arial', 18)
+    x = 40
+    y = 700
+    for i, item in enumerate(pchs_dict):
+        if y <= 100:
+            y = 700
+            pdf.showPage()
+            pdf.setFont('Arial', 12)
+        pdf.drawString(
+            x, y, f'{i + 1}: {item} - {pchs_dict[item][0]} {pchs_dict[item][1]}'
+        )
+        y -= 30
+    pdf.showPage()
     pdf.save()
     return response
 
-    # reportlab.rl_config.TTFSearchPath.append(
-    #     str(settings.BASE_DIR) + "/Library/Fonts/"
-    # )
-    # user = get_object_or_404(User, username=request.user)
-    # purchase_dict = {}
-    # purchase_list = Purchase.objects.filter(user=user)
-    # if purchase_list.count() == 0:
-    #     return redirect('purchases')
-    # for purchase in purchase_list:
-    #     recipe_ingredient_list = RecipeIngredient.objects.filter(recipe__id=purchase.recipe.id)
-    #     for recipe_ingredient in recipe_ingredient_list:
-    #         title = recipe_ingredient.ingredient.title
-    #         amount = recipe_ingredient.amount
-    #         dimension = recipe_ingredient.ingredient.dimension
-    #         if title not in purchase_dict:
-    #             purchase_dict[title] = [amount, dimension]
-    #         else:
-    #             purchase_dict[title][0] += amount
-    # response = HttpResponse(content_type="application/pdf")
-    # response["Content-Disposition"] = 'attachment; filename="recipes.pdf"'
-    # p = canvas.Canvas(response, pagesize='A4', pageCompression=0)
-    # # pdfmetrics.registerFont(TTFont("Arial", "arial.ttf"))
-    # p.setFont("Helvetica", 20)
-    # x = 50
-    # y = 750
-    # for num, el in enumerate(purchase_dict):
-    #     if y <= 100:
-    #         y = 700
-    #         p.showPage()
-    #         p.setFont("Helvetica", 20)
-    #     p.drawString(
-    #         x, y, f"№{num + 1}: {el} - {purchase_dict[el][0]} {purchase_dict[el][1]}"
-    #     )
-    #     y -= 30
-    # p.showPage()
-    # p.save()
-    # return response
 
-
+@login_required()
 def add_favorites(request):
     user = request.user
     json_data = json.loads(request.body.decode())
@@ -195,30 +154,35 @@ def add_favorites(request):
     if not favorite.exists():
         Favorite.objects.create(user=user, recipe=recipe)
         return JsonResponse(data)
-    data['success'] = 'False'       
+    data['success'] = 'False'
     return JsonResponse(data)
 
 
+@login_required()
 def favorites_view(request):
     tags = request.GET.getlist('tags')
     favorite_list = Favorite.objects.filter(user=request.user)
-    recipe_list = favorite_list.prefetch_related('recipe').filter(recipe__tags__slug__in=tags).distinct()
+    recipe_list = favorite_list.prefetch_related('recipe').filter(
+        recipe__tags__slug__in=tags
+    ).distinct()
     paginator = Paginator(recipe_list, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     count_purchase = Purchase.objects.filter(user=request.user).count()
-    return render(
-        request,
-        'favorites.html',
-        {'page': page, 'paginator': paginator, 'tags': tags, 'count_purchase': count_purchase,}
-    )
+    context = {
+        'page': page, 'paginator': paginator,
+        'tags': tags, 'count_purchase': count_purchase,
+        'page_number': page_number,
+    }
+    return render(request, 'favorites.html', context)
 
 
+@login_required()
 def delete_favorites(request, id):
     user = request.user
     recipe = get_object_or_404(Recipe, id=id)
     favorite = Favorite.objects.filter(user=user, recipe=recipe)
-    data = {'success': 'True'} 
+    data = {'success': 'True'}
     if not favorite.exists():
         data['success'] = 'False'
         return JsonResponse(data)
@@ -237,7 +201,7 @@ def add_subscriptions(request):
     if not follow.exists():
         Follow.objects.create(user=user, author=author)
         return JsonResponse(data)
-    data['success'] = 'False'       
+    data['success'] = 'False'
     return JsonResponse(data)
 
 
@@ -249,11 +213,11 @@ def subscriptions_view(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     count_purchase = Purchase.objects.filter(user=request.user).count()
-    return render(
-        request,
-        'follow.html',
-        {'page': page, 'paginator': paginator, 'count_purchase': count_purchase,}
-    )
+    context = {
+        'page': page, 'paginator': paginator,
+        'count_purchase': count_purchase,
+    }
+    return render(request, 'follow.html', context)
 
 
 @login_required()
@@ -261,7 +225,7 @@ def delete_subscriptions(request, id):
     user = request.user
     author = get_object_or_404(User, id=id)
     follow = Follow.objects.filter(user=user, author=author)
-    data = {'success': 'True'} 
+    data = {'success': 'True'}
     if not follow.exists():
         data['success'] = 'False'
         return JsonResponse(data)
@@ -269,18 +233,29 @@ def delete_subscriptions(request, id):
     return JsonResponse(data)
 
 
-#@cache_page(20, key_prefix='index_page')
+@cache_page(20, key_prefix='index_page')
 def index(request):
     tags = request.GET.getlist('tags')
-    recipe_list = Recipe.objects.prefetch_related('tags').filter(tags__slug__in=tags).distinct()
+    recipe_list = Recipe.objects.prefetch_related('tags').filter(
+        tags__slug__in=tags
+    ).distinct()
     paginator = Paginator(recipe_list, PAGINATION_SIZE)
     page_number = request.GET.get('page')
+    print(page_number)
     page = paginator.get_page(page_number)
+    print(page)
     if not request.user.is_authenticated:
-        context = {'page': page, 'paginator': paginator, 'tags': tags,} 
-    else:
-        count_purchase = Purchase.objects.filter(user=request.user).count()
-        context = {'page': page, 'paginator': paginator, 'count_purchase': count_purchase, 'tags': tags,}
+        context = {
+            'page': page, 'paginator': paginator,
+            'tags': tags, 'page_number': page_number,
+        }
+        return render(request, 'index.html', context)
+    count_purchase = Purchase.objects.filter(user=request.user).count()
+    context = {
+        'page': page, 'paginator': paginator,
+        'count_purchase': count_purchase, 'tags': tags,
+        'page_number': page_number,
+    }
     return render(request, 'index.html', context)
 
 
@@ -324,8 +299,9 @@ def new_recipe(request):
     """Функция создания нового рецепта."""
     form = RecipeForm(request.POST or None, files=request.FILES or None)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    context = {'form': form, 'count_purchase': count_purchase, }
     if not form.is_valid():
-        return render(request, 'new_recipe.html', {'form': form, 'count_purchase': count_purchase,})   
+        return render(request, 'new_recipe.html', context)
     recipe = save_recipe(request, form)
     return redirect('index')
 
@@ -334,7 +310,7 @@ def recipe_view(request, recipe_slug):
     recipe = get_object_or_404(Recipe, slug=recipe_slug)
     recipe_ingredient_list = RecipeIngredient.objects.filter(recipe__slug=recipe_slug)
     if not request.user.is_authenticated:
-        context = dict(recipe=recipe, recipe_ingredient_list=recipe_ingredient_list,)
+        context = dict(recipe=recipe, recipe_ingredient_list=recipe_ingredient_list, )
         return render(request, 'recipe.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
     favorite = Favorite.objects.filter(user=request.user, recipe=recipe)
@@ -342,11 +318,11 @@ def recipe_view(request, recipe_slug):
     if favorite.exists():
         star = True
     context = dict(
-        recipe=recipe, 
-        recipe_ingredient_list=recipe_ingredient_list, 
+        recipe=recipe,
+        recipe_ingredient_list=recipe_ingredient_list,
         count_purchase=count_purchase,
         star=star,
-        )
+    )
     return render(request, 'recipe.html', context)
 
 
@@ -357,6 +333,7 @@ def edit_recipe(request, form, instance):
         return save_recipe(request, form)
 
 
+@login_required()
 def recipe_delete(request, recipe_slug):
     recipe = get_object_or_404(Recipe, slug=recipe_slug)
     if not request.user.is_superuser:
@@ -368,7 +345,6 @@ def recipe_delete(request, recipe_slug):
 
 @login_required()
 def recipe_edit(request, recipe_slug):
-    """Функция редактирования созданного рецепта."""
     flag = True
     recipe = get_object_or_404(Recipe, slug=recipe_slug)
     if not request.user.is_superuser:
@@ -380,27 +356,37 @@ def recipe_edit(request, recipe_slug):
     context = dict(
         form=form,
         flag=flag,
-        recipe=recipe, 
+        recipe=recipe,
         recipe_ingredient_list=recipe_ingredient_list,
         count_purchase=count_purchase,
-        )
+    )
     if not form.is_valid():
         return render(request, 'new_recipe.html', context)
     edit_recipe(request, form, instance=recipe)
     return redirect('recipe', recipe_slug)
 
-    
+
 def profile(request, username):
     tags = request.GET.getlist('tags')
     author = get_object_or_404(User, username=username)
     author_recipes = author.recipes_user.all()
-    recipe_list = author_recipes.prefetch_related('tags').filter(tags__slug__in=tags).distinct()
+    recipe_list = author_recipes.prefetch_related('tags').filter(
+        tags__slug__in=tags
+    ).distinct()
     paginator = Paginator(recipe_list, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     if not request.user.is_authenticated:
-        context = {'author': author, 'page': page, 'paginator': paginator, 'tags': tags,}
+        context = {
+            'author': author, 'page': page,
+            'paginator': paginator, 'tags': tags,
+            'page_number': page_number,
+        }
         return render(request, 'profile.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
-    context = {'author': author, 'page': page, 'paginator': paginator, 'tags': tags, 'count_purchase': count_purchase}
+    context = {
+        'author': author, 'page': page,
+        'paginator': paginator, 'tags': tags,
+        'count_purchase': count_purchase, 'page_number': page_number,
+    }
     return render(request, 'profile.html', context)
