@@ -131,3 +131,6 @@ dmypy.json
 static/
 recipes/static/
 media/
+
+.idea/
+.vscode/
