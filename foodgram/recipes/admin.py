@@ -55,7 +55,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
 
 
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display: Tuple[int, str, str, float] = (
+    list_display: Tuple[int, str, str, str] = (
         "pk",
         "user",
         "recipe",
