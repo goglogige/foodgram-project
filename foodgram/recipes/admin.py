@@ -2,7 +2,9 @@ from typing import Tuple
 
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, RecipeIngredient, Tag
+from .models import (
+    Ingredient, Recipe, RecipeIngredient, Tag, Purchase, Favorite, Follow, 
+)
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -52,7 +54,42 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
     empty_value_display = "-пусто-"
 
 
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display: Tuple[int, str, str, float] = (
+        "pk",
+        "user",
+        "recipe",
+        "created",
+    )
+    search_fields = ("user",)
+    empty_value_display = "-пусто-"
+
+
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display: Tuple[int, str, str,str] = (
+        "pk",
+        "user",
+        "recipe",
+        "created",
+    )
+    search_fields = ("user",)
+    empty_value_display = "-пусто-"
+    
+
+class FollowAdmin(admin.ModelAdmin):
+    list_display: Tuple[int, str, str] = (
+        "pk",
+        "user",
+        "author",
+    )
+    search_fields = ("author",)
+    empty_value_display = "-пусто-"
+
+
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
+admin.site.register(Purchase, PurchaseAdmin)
+admin.site.register(Favorite, FavoriteAdmin)
+admin.site.register(Follow, FollowAdmin)
