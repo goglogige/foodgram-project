@@ -11,17 +11,17 @@ class Ingredient(models.Model):
     title = models.CharField(
         max_length=200,
         db_index=True,
-        verbose_name='title',
+        verbose_name='название ингредиента',
     )
     dimension = models.CharField(
         max_length=20,
-        verbose_name='dimension',
+        verbose_name='единица измерения',
     )
 
     class Meta:
         ordering = ['title']
-        verbose_name = 'ingredient'
-        verbose_name_plural = 'ingredients'
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
 
     def __str__(self):
         return f'{self.title}-{self.dimension}'
@@ -29,22 +29,26 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     title = models.CharField(
-        verbose_name='tag name',
+        verbose_name='название тега',
         max_length=50,
         db_index=True,
     )
     color = models.CharField(
-        verbose_name='tag color',
+        verbose_name='цвет тега',
         max_length=50,
     )
     slug = models.SlugField(
         max_length=50, 
-        verbose_name="slug",
+        verbose_name="слаг ингредиента",
         unique="True",
     )
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
 
 
 class Recipe(models.Model):
@@ -52,14 +56,14 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='recipes_user',
-        verbose_name='author'
+        verbose_name='автор'
     )
     recipe_name = models.CharField(
         max_length=200,
-        verbose_name='recipe name',
+        verbose_name='название рецепта',
     )
     pub_date = models.DateTimeField(
-        verbose_name='date published',
+        verbose_name='дата публикации',
         auto_now_add=True,
         db_index=True,
     )
@@ -67,29 +71,30 @@ class Recipe(models.Model):
         upload_to='recipes/',
         blank=True,
         null=True,
-        verbose_name='image',
+        verbose_name='изображение',
     )
     recipe_description = models.TextField(
-        verbose_name='recipe description',
+        verbose_name='описание рецепта',
     )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
-        verbose_name='ingredients'
+        verbose_name='ингредиенты'
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='tag',
+        verbose_name='тег',
         related_name='recipe_tags',
     )
     time = models.PositiveSmallIntegerField(
-        verbose_name='cooking time',
+        verbose_name='время приготовления',
+        validators=[MinValueValidator(1)],
     )
     slug = models.SlugField(
         max_length=255,
         unique='True',
         db_index=True,
-        verbose_name='url',
+        verbose_name='URL рецепта',
     )
 
     def __str__(self):
@@ -100,62 +105,62 @@ class Recipe(models.Model):
 
     class Meta:
         ordering = ['-pub_date']
-        verbose_name = 'recipe'
-        verbose_name_plural = 'recipes'
+        verbose_name = 'рецепт'
+        verbose_name_plural = 'рецепты'
 
 
 class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='ingredient',
+        verbose_name='ингредиент',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='recipe',
+        verbose_name='рецепт',
         related_name='ingredients_amounts',
     )
     amount = models.DecimalField(
         max_digits=6,
         decimal_places=0,
-        verbose_name='amount',
+        verbose_name='количество',
         validators=[MinValueValidator(1)]
     )
 
     class Meta:
         unique_together = ('ingredient', 'recipe')
         ordering = ['ingredient']
-        verbose_name = 'recipe ingredient'
-        verbose_name_plural = 'recipe ingredients'
+        verbose_name = 'ингредиент в рецепте'
+        verbose_name_plural = 'ингредиенты в рецепте'
 
     def __str__(self):
         return f'{self.ingredient}-{self.recipe}'
 
     
 class Purchase(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = 'пользователь',)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name = 'рецепт',)
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
     class Meta:
         ordering = ['-created']
-        verbose_name = 'purchase'
-        verbose_name_plural = 'purchases'
+        verbose_name = 'покупка'
+        verbose_name_plural = 'покупки'
         
     def __str__(self):
         return f'{self.recipe}'
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = 'пользователь',)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name = 'рецепт',)
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
     class Meta:
         ordering = ['-created']
-        verbose_name = 'favorite'
-        verbose_name_plural = 'favorites'
+        verbose_name = 'избранный'
+        verbose_name_plural = 'избранные'
         
     def __str__(self):
         return f'{self.recipe}'
@@ -165,12 +170,14 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower"
+        related_name="follower",
+        verbose_name = 'подписчик',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following"
+        related_name="following",
+        verbose_name = 'автор',
     )
 
     def __str__(self):
@@ -178,3 +185,5 @@ class Follow(models.Model):
 
     class Meta:
         unique_together = ['author', 'user']
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'

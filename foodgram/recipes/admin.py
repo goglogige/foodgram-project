@@ -29,18 +29,28 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display: Tuple[int, str, str, object, str, str] = (
+    list_display: Tuple[int, str, str, str, object, str, str, int] = (
         "pk",
         "author",
         "recipe_name",
+        "get_tags",
         "image",
         "pub_date",
         "slug",
+        "get_count_favorite",
     )
     prepopulated_fields = {"slug": ("recipe_name", )}
-    search_fields = ("recipe_name",)
+    search_fields = ["author__username", "recipe_name", "tags__slug",]
     list_filter = ("author",)
     empty_value_display = "-пусто-"
+
+    def get_tags(self, obj):
+        return ", ".join([item.slug for item in obj.tags.all()])
+
+    def get_count_favorite(self, obj):
+        favorite_list = Favorite.objects.filter(recipe__recipe_name=obj.recipe_name)
+        count = favorite_list.count()
+        return count
 
 
 class RecipeIngredientAdmin(admin.ModelAdmin):
