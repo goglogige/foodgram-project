@@ -43,13 +43,13 @@ class Tag(models.Model):
         unique="True",
     )
 
-    def __str__(self):
-        return self.title
-    
     class Meta:
         verbose_name = 'тег'
         verbose_name_plural = 'теги'
 
+    def __str__(self):
+        return self.title
+    
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -88,7 +88,10 @@ class Recipe(models.Model):
     )
     time = models.PositiveSmallIntegerField(
         verbose_name='время приготовления',
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(
+            limit_value=1,
+            message='Не менее 1 минуты'
+        )],
     )
     slug = models.SlugField(
         max_length=255,
@@ -97,16 +100,16 @@ class Recipe(models.Model):
         verbose_name='URL рецепта',
     )
 
+    class Meta:
+        ordering = ['-pub_date']
+        verbose_name = 'рецепт'
+        verbose_name_plural = 'рецепты'
+
     def __str__(self):
         return self.recipe_name
 
     def get_absolute_url(self):
         return reverse('recipe', kwargs={'recipe_slug': self.slug})
-
-    class Meta:
-        ordering = ['-pub_date']
-        verbose_name = 'рецепт'
-        verbose_name_plural = 'рецепты'
 
 
 class RecipeIngredient(models.Model):
@@ -158,6 +161,12 @@ class Favorite(models.Model):
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite',
+            )
+        ]
         ordering = ['-created']
         verbose_name = 'избранный'
         verbose_name_plural = 'избранные'
@@ -180,10 +189,15 @@ class Follow(models.Model):
         verbose_name = 'автор',
     )
 
-    def __str__(self):
-        return f'follower: {self.user} author: {self.author}'
-
     class Meta:
-        unique_together = ['author', 'user']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'user'],
+                name='unique_follow',
+            )
+        ]
         verbose_name = 'подписка'
         verbose_name_plural = 'подписки'
+
+    def __str__(self):
+        return f'follower: {self.user} author: {self.author}'
