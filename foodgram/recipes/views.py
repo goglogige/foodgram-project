@@ -210,9 +210,6 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-
-
-
 @login_required()
 def new_recipe(request):
     """Функция создания нового рецепта."""
