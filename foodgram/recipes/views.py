@@ -38,34 +38,14 @@ def ingredients(request):
     )
 
 
-# @login_required()
-# def add_purchases(request):
-#     user = request.user
-#     json_data = json.loads(request.body.decode())
-#     recipe_id = int(json_data['id'])
-#     recipe = get_object_or_404(Recipe, id=recipe_id)
-#     Purchase.objects.get_or_create(user=user, recipe=recipe)
-#     data = {'success': 'True'}
-#     return JsonResponse(data)
-
-
 @login_required()
-class PurchaseView(Objects_processor):
-
-    def add_obj(self, request):
-        obj = Purchase
+def add_purchases(request):
+    return Objects_processor(Purchase, request).add_obj()
 
 
 @login_required()
 def button_delete_purchases(request, id):
-    user = request.user
-    purchase = user.purchases.filter(recipe_id=id)
-    data = {'success': 'True'}
-    if not purchase.exists():
-        data['success'] = 'False'
-        return JsonResponse(data)
-    purchase.delete()
-    return JsonResponse(data)
+    return Objects_processor(Purchase, request).delete_obj(id=id)
 
 
 @login_required()
@@ -98,13 +78,12 @@ def purchases_download(request):
 
 @login_required()
 def add_favorites(request):
-    user = request.user
-    json_data = json.loads(request.body.decode())
-    recipe_id = int(json_data['id'])
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    Favorite.objects.get_or_create(user=user, recipe=recipe)
-    data = {'success': 'True'}
-    return JsonResponse(data)
+    return Objects_processor(Favorite, request).add_obj()
+
+    
+@login_required()
+def delete_favorites(request, id):
+    return Objects_processor(Favorite, request).delete_obj(id=id)
 
 
 @login_required()
@@ -124,19 +103,6 @@ def favorites_view(request):
         'page_number': page_number,
     }
     return render(request, 'favorites.html', context)
-
-
-@login_required()
-def delete_favorites(request, id):
-    user = request.user
-    recipe = get_object_or_404(Recipe, id=id)
-    favorite = Favorite.objects.filter(user=user, recipe=recipe)
-    data = {'success': 'True'}
-    if not favorite.exists():
-        data['success'] = 'False'
-        return JsonResponse(data)
-    favorite.delete()
-    return JsonResponse(data)
 
 
 @login_required()

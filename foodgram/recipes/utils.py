@@ -13,8 +13,8 @@ from reportlab.pdfgen import canvas
 
 from foodgram import settings
 from .models import (
-    User, Ingredient, Recipe, RecipeIngredient,
-    Purchase, Favorite, Follow
+    User, Ingredient, Recipe,
+    RecipeIngredient, Purchase,
 )
 
 
@@ -117,13 +117,27 @@ def save_recipe(request, form):
 
 
 class Objects_processor():
-   
-    def add_obj(self, request):
-        obj = None
-        user = request.user
-        json_data = json.loads(request.body.decode())
+
+    def __init__(self, object, request):
+        self.object = object
+        self.request = request
+
+    def add_obj(self):
+        user = self.request.user
+        json_data = json.loads(self.request.body.decode())
         recipe_id = int(json_data['id'])
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        obj.objects.get_or_create(user=user, recipe=recipe)
+        self.object.objects.get_or_create(user=user, recipe=recipe)
         data = {'success': 'True'}
+        return JsonResponse(data)
+    
+    def delete_obj(self, id):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, id=id)
+        object = self.object.objects.filter(user=user, recipe=recipe)
+        data = {'success': 'True'}
+        if not object.exists():
+            data['success'] = 'False'
+            return JsonResponse(data)
+        object.delete()
         return JsonResponse(data)
