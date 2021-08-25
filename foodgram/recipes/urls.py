@@ -16,7 +16,8 @@ favorites_url = [
 ]
 
 purchases_url = [
-    path('', views.add_purchases, name='purchases'),
+    # path('', views.add_purchases, name='purchases'),
+    path('', views.PurchaseView, name='purchases'),
     path('view/', views.purchases_view, name='purchases_view'),
     path('download/', views.purchases_download, name='purchases_download'),
     path('<int:id>/', views.button_delete_purchases, name='button_delete_purchases'),

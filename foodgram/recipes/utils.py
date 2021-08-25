@@ -1,8 +1,9 @@
+import json
 import reportlab
 
 from django.template.defaultfilters import slugify as django_slugify
 from django.shortcuts import redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import transaction
 
 from decimal import Decimal
@@ -12,8 +13,8 @@ from reportlab.pdfgen import canvas
 
 from foodgram import settings
 from .models import (
-    User, Ingredient, 
-    RecipeIngredient, Purchase,
+    User, Ingredient, Recipe, RecipeIngredient,
+    Purchase, Favorite, Follow
 )
 
 
@@ -115,13 +116,14 @@ def save_recipe(request, form):
         return recipe
 
 
-class Add_object():
-    # def add_object(self, request):
-    #     user = request.user
-    #     json_data = json.loads(request.body.decode())
-    #     recipe_id = int(json_data['id'])
-    #     recipe = get_object_or_404(Recipe, id=recipe_id)
-    #     Purchase.objects.get_or_create(user=user, recipe=recipe)
-    #     data = {'success': 'True'}
-    #     return JsonResponse(data)
-    pass
+class Objects_processor():
+   
+    def add_obj(self, request):
+        obj = None
+        user = request.user
+        json_data = json.loads(request.body.decode())
+        recipe_id = int(json_data['id'])
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        obj.objects.get_or_create(user=user, recipe=recipe)
+        data = {'success': 'True'}
+        return JsonResponse(data)

@@ -13,7 +13,7 @@ from .models import (
     User, Ingredient, Recipe, RecipeIngredient,
     Purchase, Favorite, Follow
 )
-from .utils import pdf_download, save_recipe
+from .utils import pdf_download, save_recipe, Objects_processor
 
 
 def page_not_found(request, exception):
@@ -38,15 +38,22 @@ def ingredients(request):
     )
 
 
+# @login_required()
+# def add_purchases(request):
+#     user = request.user
+#     json_data = json.loads(request.body.decode())
+#     recipe_id = int(json_data['id'])
+#     recipe = get_object_or_404(Recipe, id=recipe_id)
+#     Purchase.objects.get_or_create(user=user, recipe=recipe)
+#     data = {'success': 'True'}
+#     return JsonResponse(data)
+
+
 @login_required()
-def add_purchases(request):
-    user = request.user
-    json_data = json.loads(request.body.decode())
-    recipe_id = int(json_data['id'])
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    Purchase.objects.get_or_create(user=user, recipe=recipe)
-    data = {'success': 'True'}
-    return JsonResponse(data)
+class PurchaseView(Objects_processor):
+
+    def add_obj(self, request):
+        obj = Purchase
 
 
 @login_required()
