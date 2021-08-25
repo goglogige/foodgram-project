@@ -113,3 +113,15 @@ def save_recipe(request, form):
         RecipeIngredient.objects.bulk_create(obj)
         form.save_m2m()
         return recipe
+
+
+class Add_object():
+    # def add_object(self, request):
+    #     user = request.user
+    #     json_data = json.loads(request.body.decode())
+    #     recipe_id = int(json_data['id'])
+    #     recipe = get_object_or_404(Recipe, id=recipe_id)
+    #     Purchase.objects.get_or_create(user=user, recipe=recipe)
+    #     data = {'success': 'True'}
+    #     return JsonResponse(data)
+    pass

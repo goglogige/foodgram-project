@@ -132,7 +132,12 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        unique_together = ('ingredient', 'recipe')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'],
+                name='unique_recipe',
+            )
+        ]
         ordering = ['ingredient']
         verbose_name = 'ингредиент в рецепте'
         verbose_name_plural = 'ингредиенты в рецепте'
@@ -142,7 +147,12 @@ class RecipeIngredient(models.Model):
 
     
 class Purchase(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = 'пользователь',)
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        verbose_name = 'пользователь',
+        related_name = 'purchases',
+    )
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name = 'рецепт',)
     created = models.DateTimeField('date of creation', auto_now_add=True)
 

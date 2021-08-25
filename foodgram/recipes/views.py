@@ -31,7 +31,7 @@ def server_error(request):
 
 def ingredients(request):
     ingredients_queryset = Ingredient.objects.values()
-    list_ingredients = [ingredient for ingredient in ingredients_queryset]
+    list_ingredients = list(ingredients_queryset)
     return JsonResponse(
         list_ingredients,
         safe=False,
@@ -44,20 +44,15 @@ def add_purchases(request):
     json_data = json.loads(request.body.decode())
     recipe_id = int(json_data['id'])
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    purchase = Purchase.objects.filter(user=user, recipe=recipe)
+    Purchase.objects.get_or_create(user=user, recipe=recipe)
     data = {'success': 'True'}
-    if not purchase.exists():
-        Purchase.objects.create(user=user, recipe=recipe)
-        return JsonResponse(data)
-    data['success'] = 'False'
     return JsonResponse(data)
 
 
 @login_required()
 def button_delete_purchases(request, id):
     user = request.user
-    recipe = get_object_or_404(Recipe, id=id)
-    purchase = Purchase.objects.filter(user=user, recipe=recipe)
+    purchase = user.purchases.filter(recipe_id=id)
     data = {'success': 'True'}
     if not purchase.exists():
         data['success'] = 'False'
@@ -100,12 +95,8 @@ def add_favorites(request):
     json_data = json.loads(request.body.decode())
     recipe_id = int(json_data['id'])
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    favorite = Favorite.objects.filter(user=user, recipe=recipe)
+    Favorite.objects.get_or_create(user=user, recipe=recipe)
     data = {'success': 'True'}
-    if not favorite.exists():
-        Favorite.objects.create(user=user, recipe=recipe)
-        return JsonResponse(data)
-    data['success'] = 'False'
     return JsonResponse(data)
 
 
@@ -147,12 +138,8 @@ def add_subscriptions(request):
     json_data = json.loads(request.body.decode())
     author_id = int(json_data['id'])
     author = get_object_or_404(User, id=author_id)
-    follow = Follow.objects.filter(user=user, author=author)
+    Follow.objects.get_or_create(user=user, author=author)
     data = {'success': 'True'}
-    if not follow.exists():
-        Follow.objects.create(user=user, author=author)
-        return JsonResponse(data)
-    data['success'] = 'False'
     return JsonResponse(data)
 
 
