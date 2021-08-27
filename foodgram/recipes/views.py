@@ -13,7 +13,7 @@ from .models import (
     User, Ingredient, Recipe, RecipeIngredient,
     Purchase, Favorite, Follow
 )
-from .utils import pdf_download, save_recipe, Objects_processor
+from .utils import pdf_download, save_recipe, ObjectsProcessor
 
 
 def page_not_found(request, exception):
@@ -40,12 +40,12 @@ def ingredients(request):
 
 @login_required()
 def add_purchases(request):
-    return Objects_processor(Purchase, request).add_obj()
+    return ObjectsProcessor(Purchase, request).add_obj()
 
 
 @login_required()
 def button_delete_purchases(request, id):
-    return Objects_processor(Purchase, request).delete_obj(id=id)
+    return ObjectsProcessor(Purchase, request).delete_obj(id=id)
 
 
 @login_required()
@@ -78,12 +78,12 @@ def purchases_download(request):
 
 @login_required()
 def add_favorites(request):
-    return Objects_processor(Favorite, request).add_obj()
+    return ObjectsProcessor(Favorite, request).add_obj()
 
     
 @login_required()
 def delete_favorites(request, id):
-    return Objects_processor(Favorite, request).delete_obj(id=id)
+    return ObjectsProcessor(Favorite, request).delete_obj(id=id)
 
 
 @login_required()
@@ -135,7 +135,7 @@ def subscriptions_view(request):
 def delete_subscriptions(request, id):
     user = request.user
     author = get_object_or_404(User, id=id)
-    follow = Follow.objects.filter(user=user, author=author)
+    follow = user.follower.filter(author=author)
     data = {'success': 'True'}
     if not follow.exists():
         data['success'] = 'False'
@@ -152,9 +152,7 @@ def index(request):
     ).distinct()
     paginator = Paginator(recipe_list, PAGINATION_SIZE)
     page_number = request.GET.get('page')
-    print(page_number)
     page = paginator.get_page(page_number)
-    print(page)
     if not request.user.is_authenticated:
         context = {
             'page': page, 'paginator': paginator,

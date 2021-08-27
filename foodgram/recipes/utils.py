@@ -116,7 +116,7 @@ def save_recipe(request, form):
         return recipe
 
 
-class Objects_processor():
+class ObjectsProcessor:
 
     def __init__(self, object, request):
         self.object = object
