@@ -264,3 +264,4 @@ def profile(request, username):
         'count_purchase': count_purchase, 'page_number': page_number,
     }
     return render(request, 'profile.html', context)
+
