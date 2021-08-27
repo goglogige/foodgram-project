@@ -137,10 +137,9 @@ def delete_subscriptions(request, id):
     author = get_object_or_404(User, id=id)
     follow = user.follower.filter(author=author)
     data = {'success': 'True'}
-    if not follow.exists():
+    if follow.delete() == 0:
         data['success'] = 'False'
         return JsonResponse(data)
-    follow.delete()
     return JsonResponse(data)
 
 
@@ -182,9 +181,14 @@ def new_recipe(request):
 
 def recipe_view(request, recipe_slug):
     recipe = get_object_or_404(Recipe, slug=recipe_slug)
-    recipe_ingredient_list = RecipeIngredient.objects.filter(recipe__slug=recipe_slug)
+    recipe_ingredient_list = RecipeIngredient.objects.filter(
+        recipe__slug=recipe_slug
+    )
     if not request.user.is_authenticated:
-        context = dict(recipe=recipe, recipe_ingredient_list=recipe_ingredient_list, )
+        context = dict(
+            recipe=recipe,
+            recipe_ingredient_list=recipe_ingredient_list,
+        )
         return render(request, 'recipe.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
     favorite = Favorite.objects.filter(user=request.user, recipe=recipe)
@@ -224,8 +228,14 @@ def recipe_edit(request, recipe_slug):
     if not request.user.is_superuser:
         if request.user != recipe.author:
             return redirect('recipe', recipe_slug=recipe_slug)
-    form = RecipeForm(request.POST or None, files=request.FILES or None, instance=recipe)
-    recipe_ingredient_list = RecipeIngredient.objects.filter(recipe__slug=recipe_slug)
+    form = RecipeForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=recipe,
+    )
+    recipe_ingredient_list = RecipeIngredient.objects.filter(
+        recipe__slug=recipe_slug
+    )
     count_purchase = Purchase.objects.filter(user=request.user).count()
     context = dict(
         form=form,
@@ -264,4 +274,3 @@ def profile(request, username):
         'count_purchase': count_purchase, 'page_number': page_number,
     }
     return render(request, 'profile.html', context)
-

@@ -48,7 +48,9 @@ class RecipeAdmin(admin.ModelAdmin):
         return ", ".join([item.slug for item in obj.tags.all()])
 
     def get_count_favorite(self, obj):
-        favorite_list = Favorite.objects.filter(recipe__recipe_name=obj.recipe_name)
+        favorite_list = Favorite.objects.filter(
+            recipe__recipe_name=obj.recipe_name
+        )
         count = favorite_list.count()
         return count
 

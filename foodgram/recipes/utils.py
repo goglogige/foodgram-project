@@ -73,7 +73,7 @@ def pdf_download(request):
             pdf.showPage()
             pdf.setFont('Arial', 12)
         pdf.drawString(
-            x, y, f'{i + 1}: {item} - {pchs_dict[item][0]} {pchs_dict[item][1]}'
+            x, y, f'{i + 1}:{item} - {pchs_dict[item][0]} {pchs_dict[item][1]}'
         )
         y -= 30
     pdf.showPage()
@@ -136,8 +136,12 @@ class ObjectsProcessor:
         recipe = get_object_or_404(Recipe, id=id)
         object = self.object.objects.filter(user=user, recipe=recipe)
         data = {'success': 'True'}
-        if not object.exists():
+        # if not object.exists():
+        #     data['success'] = 'False'
+        #     return JsonResponse(data)
+        # object.delete()
+        # return JsonResponse(data)
+        if object.delete() == 0:
             data['success'] = 'False'
             return JsonResponse(data)
-        object.delete()
         return JsonResponse(data)

@@ -153,7 +153,11 @@ class Purchase(models.Model):
         verbose_name = 'пользователь',
         related_name = 'purchases',
     )
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name = 'рецепт',)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name = 'рецепт',
+    )
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
     class Meta:
@@ -166,8 +170,16 @@ class Purchase(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = 'пользователь',)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name = 'рецепт',)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name = 'пользователь',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name = 'рецепт',
+    )
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
     class Meta:
