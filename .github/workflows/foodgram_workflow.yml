@@ -22,9 +22,6 @@ jobs:
     - name: Lint with flake8
       run: flake8 . --exclude ./foodgram/foodgram/migrations/,./foodgram/recipes/migrations/,./foodgram/users/migrations/
 
-    - name: Test with pytest
-      run: pytest
-
 
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
@@ -44,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: goglogige/yamdb_final:latest
+          tags: goglogige/foodgram:latest
 
 
   deploy:
@@ -61,8 +58,8 @@ jobs:
           source: "docker-compose.yaml, nginx/default.conf"
           target: "~/app/"
           script: |
-            sudo docker pull goglogige/yamdb_final
-            cd yamdb_final
+            sudo docker pull goglogige/foodgram-project
+            cd foodgram-project
             sudo docker-compose down
             sudo docker rmi $(sudo docker images -a -q)
             sudo docker-compose up -d
