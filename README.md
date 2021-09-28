@@ -30,6 +30,10 @@ pip install -r requirements.txt
 ```
 sudo apt remove docker docker-engine docker.io containerd runc 
 ```
+Если сервер ранее настраивался - убедитесь что порты 8000 и 80 свободны и не используются, проверяем порты командой:
+```
+sudo ss -tulpn
+```
 Обновим список пакетов apt: 
 ```
 sudo apt update
