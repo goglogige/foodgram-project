@@ -69,13 +69,13 @@ sudo systemctl enable docker
 ```
 Создайте папку проекта на удаленном сервере и скопируйте туда файлы docker-compose.yaml, Dockerfile, host.conf:
 ```
-scp ./<FILENAME> <USER>@<HOST>:/home/<USER>/foodgram-project/foodgram
+scp ./<FILENAME> <USER>@<HOST>:/home/<USER>/dev/foodgram-project/foodgram/
 ```
 
 ### Подготовка репозитория на GitHub
 
 Для использования Continuous Integration и Continuous Deployment необходимо в репозитории на GitHub прописать Secrets - переменные доступа к вашим сервисам.
-Переменые прописаны в workflows/yamdb_workflow.yaml
+Переменые прописаны в workflows/foodgram_workflow.yml
 
 * DOCKER_PASSWORD, DOCKER_USERNAME - для загрузки и скачивания образа с DockerHub 
 * USER, HOST, PASSPHRASE, SSH_KEY - для подключения к удаленному серверу 
