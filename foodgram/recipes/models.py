@@ -38,7 +38,7 @@ class Tag(models.Model):
         max_length=50,
     )
     slug = models.SlugField(
-        max_length=50, 
+        max_length=50,
         verbose_name="слаг ингредиента",
         unique="True",
     )
@@ -49,7 +49,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -145,18 +145,18 @@ class RecipeIngredient(models.Model):
     def __str__(self):
         return f'{self.ingredient}-{self.recipe}'
 
-    
+
 class Purchase(models.Model):
     user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        verbose_name = 'пользователь',
-        related_name = 'purchases',
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='пользователь',
+        related_name='purchases',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name = 'рецепт',
+        verbose_name='рецепт',
     )
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
@@ -164,7 +164,7 @@ class Purchase(models.Model):
         ordering = ['-created']
         verbose_name = 'покупка'
         verbose_name_plural = 'покупки'
-        
+
     def __str__(self):
         return f'{self.recipe}'
 
@@ -173,12 +173,12 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name = 'пользователь',
+        verbose_name='пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name = 'рецепт',
+        verbose_name='рецепт',
     )
     created = models.DateTimeField('date of creation', auto_now_add=True)
 
@@ -192,7 +192,7 @@ class Favorite(models.Model):
         ordering = ['-created']
         verbose_name = 'избранный'
         verbose_name_plural = 'избранные'
-        
+
     def __str__(self):
         return f'{self.recipe}'
 
@@ -202,13 +202,13 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="follower",
-        verbose_name = 'подписчик',
+        verbose_name='подписчик',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="following",
-        verbose_name = 'автор',
+        verbose_name='автор',
     )
 
     class Meta:

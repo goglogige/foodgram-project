@@ -80,7 +80,7 @@ def purchases_download(request):
 def add_favorites(request):
     return ObjectsProcessor(Favorite, request).add_obj()
 
-    
+
 @login_required()
 def delete_favorites(request, id):
     return ObjectsProcessor(Favorite, request).delete_obj(id=id)
@@ -175,7 +175,7 @@ def new_recipe(request):
     context = {'form': form, 'count_purchase': count_purchase, }
     if not form.is_valid():
         return render(request, 'new_recipe.html', context)
-    recipe = save_recipe(request, form)
+    save_recipe(request, form)
     return redirect('index')
 
 

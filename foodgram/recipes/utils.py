@@ -19,10 +19,10 @@ from .models import (
 
 
 alphabet = {
-    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 
-    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm',
     'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-    'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y', 
+    'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y',
     'э': 'eh', 'ю': 'yu', 'я': 'ya'
 }
 
@@ -130,7 +130,7 @@ class ObjectsProcessor:
         self.object.objects.get_or_create(user=user, recipe=recipe)
         data = {'success': 'True'}
         return JsonResponse(data)
-    
+
     def delete_obj(self, id):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=id)

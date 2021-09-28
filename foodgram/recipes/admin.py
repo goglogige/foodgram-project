@@ -3,7 +3,7 @@ from typing import Tuple
 from django.contrib import admin
 
 from .models import (
-    Ingredient, Recipe, RecipeIngredient, Tag, Purchase, Favorite, Follow, 
+    Ingredient, Recipe, RecipeIngredient, Tag, Purchase, Favorite, Follow,
 )
 
 
@@ -25,7 +25,7 @@ class TagAdmin(admin.ModelAdmin):
         "slug",
     )
     search_fields = ("title",)
-    empty_value_display = "-пусто-"    
+    empty_value_display = "-пусто-"
 
 
 class RecipeAdmin(admin.ModelAdmin):
@@ -40,7 +40,7 @@ class RecipeAdmin(admin.ModelAdmin):
         "get_count_favorite",
     )
     prepopulated_fields = {"slug": ("recipe_name", )}
-    search_fields = ["author__username", "recipe_name", "tags__slug",]
+    search_fields = ["author__username", "recipe_name", "tags__slug", ]
     list_filter = ("author",)
     empty_value_display = "-пусто-"
 
@@ -78,7 +78,7 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display: Tuple[int, str, str,str] = (
+    list_display: Tuple[int, str, str, str] = (
         "pk",
         "user",
         "recipe",
@@ -86,7 +86,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     )
     search_fields = ("user",)
     empty_value_display = "-пусто-"
-    
+
 
 class FollowAdmin(admin.ModelAdmin):
     list_display: Tuple[int, str, str] = (
