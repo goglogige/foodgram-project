@@ -9,13 +9,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
         "localhost",
-        "127.0.0.1",
-        "[::1]",
-        "testserver",]
+        "app",
+	"130.193.43.101",
+]
 
 INSTALLED_APPS = [
     'users',
@@ -53,7 +53,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                # 'users.context_processors.year',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -71,6 +70,17 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'django_db',
+#        'USER': 'django_user',
+#        'PASSWORD': 'django_password',
+#        'HOST': 'db',
+#        'PORT': 5432,
+#    }
+#}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
