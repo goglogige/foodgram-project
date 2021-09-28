@@ -35,5 +35,7 @@ class RecipeIngredientForm(forms.ModelForm):
         model = RecipeIngredient
         fields = ['amount', ]
         widgets = {
-            'amount': forms.NumberInput(attrs={'step': 1, 'max': 1000, 'min': 0}),
+            'amount': forms.NumberInput(
+                attrs={'step': 1, 'max': 1000, 'min': 0}
+            ),
         }
