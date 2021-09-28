@@ -30,7 +30,7 @@ pip install -r requirements.txt
 ```
 sudo apt remove docker docker-engine docker.io containerd runc 
 ```
-Обновим список пакетов APT: 
+Обновим список пакетов apt: 
 ```
 sudo apt update
 ```
@@ -43,17 +43,21 @@ sudo apt install \
   gnupg-agent \
   software-properties-common -y
 ```
-Эта команда скачает скрипт для установки докера:
+Добавим ключ GPG для подтверждения подлинности в процессе установки:
 ```
-curl -fsSL https://get.docker.com -o get-docker.sh
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 ```
-Эта команда запустит его:
+Добавим репозиторий Docker в пакеты apt:
 ```
-sh get-docker.sh
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 ```
-Установка docker-compose:
+Снова обновим индекс пакетов, потому что в apt добавлен новый репозиторий:
 ```
-apt install docker-compose
+sudo apt update
+```
+Установим Docker и docker-compose:
+```
+sudo apt install docker-ce docker-compose -y
 ```
 Создайте папку проекта на удаленном сервере и скопируйте туда файлы docker-compose.yaml, Dockerfile, host.conf:
 ```
