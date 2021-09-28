@@ -55,13 +55,21 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 ```
 sudo apt update
 ```
-Установим Docker и docker-compose:
+Установим Docker и docker-compose, запустим демон-процесс и активируем автоматический запуск при загрузке, все одной командой:
 ```
 sudo apt install docker-ce docker-compose -y
 ```
+Проверим что Docker работает:
+```
+sudo systemctl status docker
+```
+Установим автозапуск Docker при старте системы:
+```
+sudo systemctl enable docker
+```
 Создайте папку проекта на удаленном сервере и скопируйте туда файлы docker-compose.yaml, Dockerfile, host.conf:
 ```
-scp ./<FILENAME> <USER>@<HOST>:/home/<USER>/yamdb_final/
+scp ./<FILENAME> <USER>@<HOST>:/home/<USER>/foodgram-project/foodgram
 ```
 
 ### Подготовка репозитория на GitHub
