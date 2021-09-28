@@ -16,10 +16,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd foodgram-project/foodgram/
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        pip install -r requirements.txt
+        pip install -r foodgram/requirements.txt
     - name: Lint with flake8
       run: flake8 . --exclude ./foodgram/foodgram/migrations/,./foodgram/recipes/migrations/,./foodgram/users/migrations/
 
