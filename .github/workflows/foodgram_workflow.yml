@@ -16,6 +16,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd foodgram-project
         python -m pip install --upgrade pip
         pip install flake8 pytest
         pip install -r requirements.txt
@@ -58,11 +59,13 @@ jobs:
           source: "docker-compose.yaml, nginx/default.conf"
           target: "~/app/"
           script: |
-            sudo docker pull goglogige/foodgram-project
-            cd foodgram-project
+            sudo docker pull goglogige/foodgram:latest
+            cd foodgram-project/foodgram
             sudo docker-compose down
             sudo docker rmi $(sudo docker images -a -q)
             sudo docker-compose up -d
+            
+            
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
