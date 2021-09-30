@@ -58,7 +58,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: 22
-          source: 'docker-compose.yaml, config/nginx/default.conf'
+          source: 'docker-compose.yaml, host.conf, Dockerfile'
           target: '/home/${{ secrets.USER }}/dev/foodgram'  
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
