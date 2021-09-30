@@ -26,6 +26,8 @@ services:
       - media_value:/code/media/
     depends_on:
       - db
+    env_file:
+      - ./foodgram/.env 
 
   nginx:
     image: nginx:1.19.6
