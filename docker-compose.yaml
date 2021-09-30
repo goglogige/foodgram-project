@@ -18,20 +18,22 @@ services:
   app:
     image: goglogige/foodgram:latest
     restart: always
-    volumes:
-      - staticfiles:/code/static
     ports:
       - 8000:8000
+    volumes:
+      - static_value:/code/static/
+      - media_value:/code/media/
     depends_on:
       - db
 
   nginx:
     image: nginx:1.19.6
     restart: always
-    volumes:
-      - staticfiles:/static
-      - ./host.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
+    volumes:
+      - ./host.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
     depends_on:
       - app
