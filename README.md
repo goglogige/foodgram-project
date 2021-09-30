@@ -126,4 +126,4 @@ Python, Django, Django REST Framework, PostgreSQL, Nginx, Docker, GitHub Actions
 
 ## Бэйдж
 
-https://github.com/goglogige/yamdb_final/workflows/Yamdb_final%20workflow/badge.svg
+https://github.com/goglogige/foodgram-project/workflows/foodgram%20workflow/badge.svg
