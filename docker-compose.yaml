@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ./foodgram/.env 
+      - ./.env
 
   nginx:
     image: nginx:1.19.6
