@@ -58,7 +58,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           source: 'docker-compose.yaml, host.conf, Dockerfile'
-          target: '/home/goglogige/dev/foodgram-project'  
+          target: '/home/goglogige/dev/foodgram-project'
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
