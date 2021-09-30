@@ -120,8 +120,6 @@ Python, Django, Django REST Framework, PostgreSQL, Nginx, Docker, GitHub Actions
 * **Evgenii Katolichenko** - автор, студент курса Python-разработчик в Яндекс.Практикум. Это учебный проект.
 Если есть вопросы или пожелания по проекту пишите на почту - evg.katolichenko@gmail.com
 
-Список [разработчиков](https://github.com/goglogige/foodgram-project/graphs/contributors) принимавших участие в проекте.
-
 ## Благодарности
 
 * Создателям проекта Яндекс.Практикум
