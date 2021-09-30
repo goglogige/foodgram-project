@@ -74,7 +74,8 @@ sudo systemctl status docker
 ```
 sudo systemctl enable docker
 ```
-Создайте папку проекта на удаленном сервере и скопируйте туда файлы docker-compose.yaml, Dockerfile, host.conf:
+Создайте папку проекта на удаленном сервере и скопируйте туда файл переменных окружения .env,
+файлы docker-compose.yaml, Dockerfile, host.conf будут скопированы при пуше:
 ```
 scp ./<FILENAME> <USER>@<HOST>:/home/<USER>/dev/foodgram-project/foodgram/
 ```
