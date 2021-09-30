@@ -106,11 +106,13 @@ sudo docker container exec -it <CONTAINER ID> bash
 4. Внутри контейнера необходимо выполнить миграции и собрать статику приложения:
 ```
 python manage.py collectstatic --no-input
+```
+```
 python manage.py migrate
 ```
 5. Для использования панели администратора по адресу http://0.0.0.0/admin/ необходимо создать суперпользователя.
 ```
-python manage.py createsuperuser.
+python manage.py createsuperuser
 ```
 
 ## Технологии используемые в проекте
