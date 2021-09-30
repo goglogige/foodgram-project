@@ -96,11 +96,11 @@ ssh <USER>@<HOST>
 ```
 2. Нам понадобится CONTAINER ID, используем команду для отображения запущенных контейнеров:
 ```
-docker container ps
+sudo docker container ps
 ```
 3. Перейдите в запущенный контейнер приложения командой:
 ```
-docker container exec -it <CONTAINER ID> bash
+sudo docker container exec -it <CONTAINER ID> bash
 ```
 4. Внутри контейнера необходимо выполнить миграции и собрать статику приложения:
 ```
