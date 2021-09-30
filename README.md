@@ -1,5 +1,7 @@
 # Cайт Foodgram, «Продуктовый помощник»
 
+![Foodgram workflow](https://github.com/goglogige/foodgram-project/actions/workflows/foodgram_workflow.yml/badge.svg)
+
 Онлайн-сервис на котором пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 Используется Continuous Integration и Continuous Deployment.
@@ -123,7 +125,3 @@ Python, Django, Django REST Framework, PostgreSQL, Nginx, Docker, GitHub Actions
 * Наставникам
 * Код ревьюверу
 * Отзывчивым однокурсникам
-
-## Бэйдж
-
-https://github.com/goglogige/foodgram-project/workflows/foodgram%20workflow/badge.svg
