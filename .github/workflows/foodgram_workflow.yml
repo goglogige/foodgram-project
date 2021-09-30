@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: goglogige/foodgram:latest
+          tags: goglogige/foodgram:v1
 
 
   deploy:
