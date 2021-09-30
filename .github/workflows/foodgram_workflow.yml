@@ -50,16 +50,16 @@ jobs:
     steps:
       - name: check out the repo
         uses: actions/checkout@v2
-      # - name: copy file to server
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USER }}
-      #     key: ${{ secrets.SSH_KEY }}
-      #     passphrase: ${{ secrets.PASSPHRASE }}
-      #     port: 22
-      #     source: 'docker-compose.yaml, config/nginx/default.conf'
-      #     target: '/home/${{ secrets.USER }}/dev/foodgram'  
+      - name: copy file to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          source: 'docker-compose.yaml, config/nginx/default.conf'
+          target: '/home/${{ secrets.USER }}/dev/foodgram'  
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
@@ -67,7 +67,6 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          port: 22
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
             cd dev/foodgram-project
