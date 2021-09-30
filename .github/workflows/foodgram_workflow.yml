@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
+          tags: goglogige/foodgram:latest
 
 
   deploy:
@@ -57,9 +57,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          port: 22
           source: 'docker-compose.yaml, host.conf, Dockerfile'
-          target: '/home/${{ secrets.USER }}/dev/foodgram'  
+          target: '/home/goglogige/dev/foodgram'  
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
@@ -68,7 +67,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
+            sudo docker pull goglogige/foodgram:latest
             cd dev/foodgram-project
             sudo docker-compose down
             sudo docker rmi $(sudo docker images -a -q)
