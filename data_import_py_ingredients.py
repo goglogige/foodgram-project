@@ -1,14 +1,13 @@
 import csv
 import os
 
+os.environ['DJANGO_SETTINGS_MODULE'] = 'foodgram.settings'
+
 from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
 
 from recipes.models import Ingredient
 
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'foodgram.settings'
-
-application = get_wsgi_application()
 
 with open('ingredients_.csv') as csvfile:
     ingredient_reader = csv.reader(csvfile)
