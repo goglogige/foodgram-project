@@ -2,6 +2,8 @@
 
 ![Foodgram workflow](https://github.com/goglogige/foodgram-project/actions/workflows/foodgram_workflow.yml/badge.svg)
 
+Адрес сервера: http://130.193.43.101/
+
 Онлайн-сервис на котором пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 Используется Continuous Integration и Continuous Deployment.
@@ -105,7 +107,7 @@ sudo docker container exec -it <CONTAINER ID> bash
 ```
 4. Внутри контейнера необходимо выполнить миграции и собрать статику приложения:
 ```
-python manage.py collectstatic --no-input
+python manage.py collectstatic
 ```
 ```
 python manage.py migrate
