@@ -135,3 +135,4 @@ media/
 .vscode/
 .idea
 .vscode
+.data_import_py_ingredients.py
