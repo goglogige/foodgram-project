@@ -105,14 +105,7 @@ sudo docker container ps
 ```
 sudo docker container exec -it <CONTAINER ID> bash
 ```
-4. Внутри контейнера необходимо выполнить миграции и собрать статику приложения:
-```
-python manage.py collectstatic
-```
-```
-python manage.py migrate
-```
-5. Для использования панели администратора по адресу http://0.0.0.0/admin/ необходимо создать суперпользователя.
+4. Внутри контейнера создадим суперпользователя для использования панели администратора по адресу http://<HOST>/admin/:
 ```
 python manage.py createsuperuser
 ```
@@ -131,4 +124,4 @@ Python, Django, PostgreSQL, Nginx, Docker, GitHub Actions
 * Куратору
 * Наставникам
 * Код ревьюверу
-* Отзывчивым однокурсникам
+
