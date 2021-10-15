@@ -1,5 +1,7 @@
 import json
 
+from urllib.parse import unquote
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -30,12 +32,13 @@ def server_error(request):
 
 
 def ingredients(request):
-    ingredients_queryset = Ingredient.objects.values()
-    list_ingredients = list(ingredients_queryset)
-    return JsonResponse(
-        list_ingredients,
-        safe=False,
-    )
+    query = unquote(request.GET.get('query'))
+    print(query)
+    data = list(Ingredient.objects.filter(
+        title__startswith=query
+    ).values(
+        'title', 'dimension'))
+    return JsonResponse(data, safe=False)
 
 
 @login_required()

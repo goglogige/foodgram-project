@@ -10,11 +10,11 @@
         {% url 'favorites_view' as favorites %}
         <li class="nav__item {% if favorites|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'favorites_view' %}" class="nav__link link">Избранное</a></li>
         {% url 'purchases_view' as purchases %}
-        <li class="nav__item {% if purchases|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ count_purchase }}</span></li>
+        <li class="nav__item {% if purchases|active_url:request %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{% if count_purchase > 0 %}{{ count_purchase }}{% endif %}</span></li>
     </ul>
 {% else %}
     <ul class="nav__items list">
         <li class="nav__item {% if index %}nav__item_active{% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
-        <li class="nav__item {% if purchases %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок <span class="badge badge_style_blue nav__badge" id="counter">{{ count_purchase }}</span></a></li>
+        <li class="nav__item {% if purchases %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок <span class="badge badge_style_blue nav__badge" id="counter">{% if count_purchase > 0 %}{{ count_purchase }}{% endif %}</span></a></li>
     </ul>
 {% endif %}

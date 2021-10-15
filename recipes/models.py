@@ -2,6 +2,35 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+from django.utils.functional import cached_property
+
+
+class PositiveIntegerWithoutZeroField(models.PositiveSmallIntegerField):
+    description = _("Positive integer without zero")
+
+    def __str__(self):
+        return "PositiveIntegerWithoutZeroField"
+
+    def formfield(self, **kwargs):
+        return super().formfield(**{
+            'min_value': 1,
+            **kwargs,
+        })
+
+
+class PositiveDecimalWithoutZeroField(models.DecimalField):
+    description = _("Positive decimal without zero")
+
+    def __str__(self):
+        return "PositiveDecimalWithoutZeroField"
+
+    def formfield(self, **kwargs):
+        return super().formfield(**{
+            'min_value': 1,
+            **kwargs,
+        })
 
 
 User = get_user_model()
@@ -86,7 +115,7 @@ class Recipe(models.Model):
         verbose_name='тег',
         related_name='recipe_tags',
     )
-    time = models.PositiveSmallIntegerField(
+    time = PositiveIntegerWithoutZeroField(
         verbose_name='время приготовления',
         validators=[MinValueValidator(
             limit_value=1,
@@ -124,11 +153,14 @@ class RecipeIngredient(models.Model):
         verbose_name='рецепт',
         related_name='ingredients_amounts',
     )
-    amount = models.DecimalField(
-        max_digits=6,
-        decimal_places=0,
+    amount = PositiveDecimalWithoutZeroField(
+        max_digits=7,
+        decimal_places=1,
         verbose_name='количество',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(
+            limit_value=1,
+            message='Введите не менее 1 единицы ингредиента!',
+        )],
     )
 
     class Meta:
