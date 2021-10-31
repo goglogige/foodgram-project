@@ -91,7 +91,10 @@ def delete_favorites(request, id):
 
 @login_required()
 def favorites_view(request):
-    tags = request.GET.getlist('tags')
+    if request.get_full_path() == '/favorites/view/':
+        tags = ['breakfast', 'lunch', 'dinner']
+    else:
+        tags = request.GET.getlist('tags')
     favorite_list = Favorite.objects.filter(user=request.user)
     recipe_list = favorite_list.prefetch_related('recipe').filter(
         recipe__tags__slug__in=tags
@@ -148,7 +151,10 @@ def delete_subscriptions(request, id):
 
 @cache_page(20, key_prefix='index_page')
 def index(request):
-    tags = request.GET.getlist('tags')
+    if request.get_full_path() == '/':
+        tags = ['breakfast', 'lunch', 'dinner']
+    else:
+        tags = request.GET.getlist('tags')
     recipe_list = Recipe.objects.prefetch_related('tags').filter(
         tags__slug__in=tags
     ).distinct()
@@ -254,7 +260,10 @@ def recipe_edit(request, recipe_slug):
 
 
 def profile(request, username):
-    tags = request.GET.getlist('tags')
+    if request.get_full_path() == f'/authors/{username}/':
+        tags = ['breakfast', 'lunch', 'dinner']
+    else:
+        tags = request.GET.getlist('tags')
     author = get_object_or_404(User, username=username)
     author_recipes = author.recipes_user.all()
     recipe_list = author_recipes.prefetch_related('tags').filter(
