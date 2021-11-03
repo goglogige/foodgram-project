@@ -33,7 +33,15 @@
 {% csrf_token %}
 
     <div class="author-subscribe" data-author="{{ author.id }}">
-        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+        <p style="padding: 0 0 2em 0;">
+        {% if user.is_authenticated %}
+        {% if subs %}
+        <button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button>
+        {% else %}
+        <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button>
+        {% endif %}
+        {% endif %}
+        </p>
     </div>
 
     <div class="card-list">

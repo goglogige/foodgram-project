@@ -34,3 +34,8 @@ def add_tag(list, str):
     new_list.append(str)
     str = '&tags=' + '&tags='.join(new_list)
     return str
+
+
+@register.filter
+def to_str(value):
+    return str(value)

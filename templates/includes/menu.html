@@ -15,6 +15,5 @@
 {% else %}
     <ul class="nav__items list">
         <li class="nav__item {% if index %}nav__item_active{% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
-        <li class="nav__item {% if purchases %}nav__item_active{% endif %}"><a href="{% url 'purchases_view' %}" class="nav__link link">Список покупок <span class="badge badge_style_blue nav__badge" id="counter">{% if count_purchase > 0 %}{{ count_purchase }}{% endif %}</span></a></li>
     </ul>
 {% endif %}

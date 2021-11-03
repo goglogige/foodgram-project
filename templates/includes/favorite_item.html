@@ -1,3 +1,4 @@
+{% load user_filters %}
 <div class="card" data-id="{{ favorite.recipe.id }}">
     <a href="{% url 'recipe' favorite.recipe.slug %}" class="link" target="_blank">
     <img src="{{ favorite.recipe.image.url }}" alt="{{ favorite.recipe.slug }}" class="card__image"></a>
@@ -28,7 +29,11 @@
         </div>
     </div>
     <div class="card__footer">
+        {% if favorite|to_str in recipe_name_list %}
+        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
+        {% else %}
         <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+        {% endif %}
         <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
     </div>
 </div>

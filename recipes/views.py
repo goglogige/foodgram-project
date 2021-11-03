@@ -5,15 +5,16 @@ from urllib.parse import unquote
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.db.models.fields import SlugField
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.decorators.cache import cache_page
+from django.urls.base import reverse
 
 from foodgram.settings import PAGINATION_SIZE
 from .forms import RecipeForm
 from .models import (
     User, Ingredient, Recipe, RecipeIngredient,
-    Purchase, Favorite, Follow
+    Purchase, Favorite, Follow, Tag
 )
 from .utils import pdf_download, save_recipe, ObjectsProcessor
 
@@ -33,7 +34,6 @@ def server_error(request):
 
 def ingredients(request):
     query = unquote(request.GET.get('query'))
-    print(query)
     data = list(Ingredient.objects.filter(
         title__startswith=query
     ).values(
@@ -91,8 +91,9 @@ def delete_favorites(request, id):
 
 @login_required()
 def favorites_view(request):
-    if request.get_full_path() == '/favorites/view/':
-        tags = ['breakfast', 'lunch', 'dinner']
+    if request.get_full_path() == reverse('favorites_view'):
+        tag_list = Tag.objects.all()
+        tags = [i.slug for i in tag_list]
     else:
         tags = request.GET.getlist('tags')
     favorite_list = Favorite.objects.filter(user=request.user)
@@ -103,10 +104,23 @@ def favorites_view(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    purchase_and_favorite_recipe_id_list = list(Purchase.objects.filter(
+        recipe__recipe_name__in=list(recipe_list)
+    ).values('recipe_id'))
+    recipe_id_list = [
+        i['recipe_id'] for i in purchase_and_favorite_recipe_id_list
+        ]
+    purchase_and_favorite_recipe_list = list(Recipe.objects.filter(
+        id__in=recipe_id_list
+    ).values('recipe_name'))
+    recipe_name_list = [
+        i['recipe_name'] for i in purchase_and_favorite_recipe_list
+        ]
     context = {
         'page': page, 'paginator': paginator,
         'tags': tags, 'count_purchase': count_purchase,
         'page_number': page_number,
+        'recipe_name_list': recipe_name_list,
     }
     return render(request, 'favorites.html', context)
 
@@ -149,10 +163,10 @@ def delete_subscriptions(request, id):
     return JsonResponse(data)
 
 
-@cache_page(20, key_prefix='index_page')
 def index(request):
-    if request.get_full_path() == '/':
-        tags = ['breakfast', 'lunch', 'dinner']
+    if request.get_full_path() == reverse('index'):
+        tag_list = Tag.objects.all()
+        tags = [i.slug for i in tag_list]
     else:
         tags = request.GET.getlist('tags')
     recipe_list = Recipe.objects.prefetch_related('tags').filter(
@@ -168,10 +182,22 @@ def index(request):
         }
         return render(request, 'index.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    section_favorite_list = Favorite.objects.filter(
+        user=request.user,
+        recipe__in=recipe_list,
+    )
+    favorite_recipes = [i.recipe.recipe_name for i in section_favorite_list]
+    section_purchase_list = Purchase.objects.filter(
+        user=request.user,
+        recipe__in=recipe_list,
+    )
+    purchase_recipes = [i.recipe.recipe_name for i in section_purchase_list]
     context = {
         'page': page, 'paginator': paginator,
         'count_purchase': count_purchase, 'tags': tags,
         'page_number': page_number,
+        'purchase_recipes': purchase_recipes,
+        'favorite_recipes': favorite_recipes,
     }
     return render(request, 'index.html', context)
 
@@ -200,15 +226,25 @@ def recipe_view(request, recipe_slug):
         )
         return render(request, 'recipe.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    purchase = Purchase.objects.filter(user=request.user, recipe=recipe)
     favorite = Favorite.objects.filter(user=request.user, recipe=recipe)
+    follow = Follow.objects.filter(user=request.user, author=recipe.author)
     star = False
+    plus = False
+    subs = False
     if favorite.exists():
         star = True
+    if purchase.exists():
+        plus = True
+    if follow.exists():
+        subs = True    
     context = dict(
         recipe=recipe,
         recipe_ingredient_list=recipe_ingredient_list,
         count_purchase=count_purchase,
         star=star,
+        plus=plus,
+        subs=subs,
     )
     return render(request, 'recipe.html', context)
 
@@ -260,8 +296,12 @@ def recipe_edit(request, recipe_slug):
 
 
 def profile(request, username):
-    if request.get_full_path() == f'/authors/{username}/':
-        tags = ['breakfast', 'lunch', 'dinner']
+    if request.get_full_path() == reverse(
+        'profile',
+        kwargs={'username': username}
+    ):
+        tag_list = Tag.objects.all()
+        tags = [i.slug for i in tag_list]
     else:
         tags = request.GET.getlist('tags')
     author = get_object_or_404(User, username=username)
@@ -280,9 +320,22 @@ def profile(request, username):
         }
         return render(request, 'profile.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    section_favorite_list = Favorite.objects.filter(
+        user=request.user,
+        recipe__in=recipe_list,
+    )
+    favorite_recipes = [i.recipe.recipe_name for i in section_favorite_list]
+    section_purchase_list = Purchase.objects.filter(
+        user=request.user,
+        recipe__in=recipe_list,
+    )
+    purchase_recipes = [i.recipe.recipe_name for i in section_purchase_list]
     context = {
         'author': author, 'page': page,
         'paginator': paginator, 'tags': tags,
-        'count_purchase': count_purchase, 'page_number': page_number,
+        'count_purchase': count_purchase, 
+        'page_number': page_number,
+        'favorite_recipes': favorite_recipes,
+        'purchase_recipes': purchase_recipes,
     }
     return render(request, 'profile.html', context)

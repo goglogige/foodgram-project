@@ -1,3 +1,4 @@
+{% load user_filters %}
 <div class="card" data-id="{{ recipe.id }}">
     <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
     <img src="{{ recipe.image.url }}" alt="{{ recipe.slug }}" class="card__image"></a>
@@ -28,7 +29,17 @@
         </div>
     </div>
     <div class="card__footer">
+        {% if user.is_authenticated %}
+        {% if recipe|to_str in purchase_recipes %}
+        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
+        {% else %}
         <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+        {% endif %}
+        {% if recipe|to_str in favorite_recipes %}
+        <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+        {% else %}
         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+        {% endif %}
+        {% endif %}
     </div>
 </div>
