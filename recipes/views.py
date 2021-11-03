@@ -319,6 +319,12 @@ def profile(request, username):
         }
         return render(request, 'profile.html', context)
     count_purchase = Purchase.objects.filter(user=request.user).count()
+    follow = Follow.objects.filter(
+        user=request.user, author__username=username
+    )
+    subs = False
+    if follow.exists():
+        subs = True
     section_favorite_list = Favorite.objects.filter(
         user=request.user,
         recipe__in=recipe_list,
@@ -333,7 +339,7 @@ def profile(request, username):
         'author': author, 'page': page,
         'paginator': paginator, 'tags': tags,
         'count_purchase': count_purchase,
-        'page_number': page_number,
+        'page_number': page_number, 'subs': subs,
         'favorite_recipes': favorite_recipes,
         'purchase_recipes': purchase_recipes,
     }
