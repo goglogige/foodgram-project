@@ -5,7 +5,6 @@ from urllib.parse import unquote
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models.fields import SlugField
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls.base import reverse
@@ -237,7 +236,7 @@ def recipe_view(request, recipe_slug):
     if purchase.exists():
         plus = True
     if follow.exists():
-        subs = True    
+        subs = True
     context = dict(
         recipe=recipe,
         recipe_ingredient_list=recipe_ingredient_list,
@@ -333,7 +332,7 @@ def profile(request, username):
     context = {
         'author': author, 'page': page,
         'paginator': paginator, 'tags': tags,
-        'count_purchase': count_purchase, 
+        'count_purchase': count_purchase,
         'page_number': page_number,
         'favorite_recipes': favorite_recipes,
         'purchase_recipes': purchase_recipes,
