@@ -90,7 +90,10 @@ def delete_favorites(request, id):
 
 @login_required()
 def favorites_view(request):
-    if request.get_full_path() == reverse('favorites_view'):
+    page = request.GET.getlist('page')
+    path_with_page = f'{reverse("favorites_view")}?page={page}/'
+    path_without_page = reverse("favorites_view")
+    if request.get_full_path() == path_without_page or path_with_page:
         tag_list = Tag.objects.all()
         tags = [i.slug for i in tag_list]
     else:
@@ -163,7 +166,10 @@ def delete_subscriptions(request, id):
 
 
 def index(request):
-    if request.get_full_path() == reverse('index'):
+    page = request.GET.getlist('page')
+    path_with_page = f'{reverse("index")}?page={page}/'
+    path_without_page = reverse("index")
+    if request.get_full_path() == path_without_page or path_with_page:
         tag_list = Tag.objects.all()
         tags = [i.slug for i in tag_list]
     else:
@@ -295,10 +301,13 @@ def recipe_edit(request, recipe_slug):
 
 
 def profile(request, username):
-    if request.get_full_path() == reverse(
-        'profile',
-        kwargs={'username': username}
-    ):
+    page = request.GET.getlist('page')
+    pwp = f'{reverse("profile", kwargs={"username": username})}?page={page}/'
+    path_without_page = reverse(
+        "profile",
+        kwargs={"username": username}
+    )
+    if request.get_full_path() == path_without_page or pwp:
         tag_list = Tag.objects.all()
         tags = [i.slug for i in tag_list]
     else:
