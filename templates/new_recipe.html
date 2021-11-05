@@ -36,7 +36,9 @@
                 <label for="{{ form.recipe_name.id_for_label }}" class="form__label">{{ form.recipe_name.label }}</label>
                 <div class="form__field-group">
                     {{ form.recipe_name|add_class:"form__input" }}
-                    <span class="form__error"></span>
+                    {% if form.errors %}
+                    <span class="form__error">{{ form.recipe_name.errors }} </span>
+                    {% endif %}
                 </div>
             </div>
 
