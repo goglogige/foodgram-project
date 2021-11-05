@@ -88,8 +88,10 @@ class Recipe(models.Model):
     recipe_name = models.CharField(
         max_length=200,
         unique='True',
-        error_messages={'unique': "Рецепт с таким именем уже существует. "
-        "Используйте пожалуйста другое имя рецепта."},
+        error_messages={
+            'unique': "Рецепт с таким именем уже существует. "
+            "Используйте пожалуйста другое имя рецепта."
+        },
         verbose_name='название рецепта',
     )
     pub_date = models.DateTimeField(
